@@ -15,6 +15,16 @@ service "RouteGuide" on ep {
         }
     }
 
+    remote function ListFeatures(Rectangle rectangle) returns stream<Feature, grpc:Error?>|error {
+        Feature[] selectedFeatures = [];
+        foreach Feature feature in FEATURES {
+            if inRange(feature.location, rectangle) {
+                selectedFeatures.push(feature);
+            }
+        }
+        return selectedFeatures.toStream();
+    }
+
     remote function RecordRoute(stream<Point, grpc:Error?> clientStream) returns RouteSummary|error {
         Point? lastPoint = ();
         int pointCount = 0;
@@ -36,16 +46,6 @@ service "RouteGuide" on ep {
         decimal endTime = time:monotonicNow();
         int elapsedTime = <int>(endTime - startTime);
         return {point_count: pointCount, feature_count: featureCount, distance: distance, elapsed_time: elapsedTime};
-    }
-
-    remote function ListFeatures(Rectangle rectangle) returns stream<Feature, grpc:Error?>|error {
-        Feature[] selectedFeatures = [];
-        foreach Feature feature in FEATURES {
-            if inRange(feature.location, rectangle) {
-                selectedFeatures.push(feature);
-            }
-        }
-        return selectedFeatures.toStream();
     }
 
     remote function RouteChat(RouteGuideRouteNoteCaller caller, stream<RouteNote, grpc:Error?> clientNotesStream) returns error? {
