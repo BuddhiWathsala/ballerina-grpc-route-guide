@@ -1,5 +1,4 @@
 import ballerina/grpc;
-import ballerina/io;
 
 public isolated client class RouteGuideClient {
     *grpc:AbstractClientEndpoint;
@@ -117,8 +116,6 @@ public class FeatureStream {
 
     public isolated function next() returns record {|Feature value;|}|grpc:Error? {
         var streamValue = self.anydataStream.next();
-        io:println("streamValue");
-        io:println(streamValue);
         if (streamValue is ()) {
             return streamValue;
         } else if (streamValue is grpc:Error) {
