@@ -16,7 +16,7 @@ public function main() returns error? {
     io:println(`ListFeatures: lowLat=${rectangle.lo.latitude},  lowLon=${rectangle.lo.latitude}, hiLat=${rectangle.hi.latitude},  hiLon=${rectangle.hi.latitude}`);
     stream<Feature, grpc:Error?> features = check ep->ListFeatures(rectangle);
     error? e = features.forEach(function(Feature f) {
-        io:println(`Result: lat=${f.location.latitude},  lon=${f.location.longitude}`);
+        io:println(`Result: lat=${f.location.latitude}, lon=${f.location.longitude}`);
     });
 
     // Client streaming
@@ -48,9 +48,7 @@ public function main() returns error? {
     check routeClient->complete();
     RouteNote? receiveRouteNote = check routeClient->receiveRouteNote();
     while receiveRouteNote != () {
-        if receiveRouteNote is RouteNote {
-            io:println(`Got message '${receiveRouteNote.message}' at lat=${receiveRouteNote.location.latitude}, lon=${receiveRouteNote.location.longitude}`);
-        }
+        io:println(`Got message '${receiveRouteNote.message}' at lat=${receiveRouteNote.location.latitude}, lon=${receiveRouteNote.location.longitude}`);
         receiveRouteNote = check routeClient->receiveRouteNote();
     }
 }
